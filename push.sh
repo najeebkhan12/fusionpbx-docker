@@ -1,9 +1,8 @@
-TAG=5.4
+TAG=5.5.7
 # commit current running images 
 #docker commit fusionpbx michaelfangtw/fusionpbx-docker:$TAG
 #tag 
-docker tag fusionpbx-docker:$TAG michaelfangtw/fusionpbx-docker:$TAG
-docker login
-docker push michaelfangtw/fusionpbx-docker:$TAG
+docker tag dc/fusionpbx:$TAG najeebkhan12/fusionpbx:$TAG
+docker push najeebkhan12/fusionpbx:$TAG
 
 

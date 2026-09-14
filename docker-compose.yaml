@@ -9,7 +9,7 @@ services:
     
     #using docker hub image
     #fusionpbx 5.2 is old theme(5.4 is new theme)
-    image: michaelfangtw/fusionpbx-docker:5.4
+    image: ${IMAGE_NAME}
 
     # Use host networking to allow the container to access all host ports.
     # This is necessary for the large RTP port range.

@@ -1,7 +1,7 @@
-FROM ubuntu:24.04
-LABEL maintainer="michelfang <yingchih.fang@gmail.com>"
+FROM debian:13
+LABEL maintainer="najeebkh <khannajeeb362@gmail.com>"
 #==================================================================
-#MODIFY YOUR DB CONFIG in src/fusionpbx-install.sh/ubuntu/resource/conig.sh
+#MODIFY YOUR DB CONFIG in src/fusionpbx-install.sh/debian/resource/config.sh
 #==================================================================
 
 ##########################
@@ -24,18 +24,20 @@ RUN git clone https://github.com/fusionpbx/fusionpbx-install.sh.git
 # make sure installer scripts are executable and run the installer
 RUN chmod -R +x /usr/src/fusionpbx-install.sh 
 
-COPY ./config.sh  /usr/src/fusionpbx-install.sh/ubuntu/resources/config.sh
+COPY ./config.sh  /usr/src/fusionpbx-install.sh/debian/resources/config.sh
 # Source common environment files before running any scripts that rely on them
 # Set working directory where resources/scripts will be located
-WORKDIR /usr/src/fusionpbx-install.sh/ubuntu
+WORKDIR /usr/src/fusionpbx-install.sh/debian
 
 ############################
 #equal to install.sh
 ############################
 
 
-# Remove cdrom sources from apt list and update/upgrade packages
-RUN sed -i '/cdrom:/d' /etc/apt/sources.list && \
+# Strip cdrom sources if present. Debian 13 uses DEB822 files under
+# /etc/apt/sources.list.d/ and may not have /etc/apt/sources.list at all.
+RUN find /etc/apt -type f \( -name 'sources.list' -o -name '*.list' -o -name '*.sources' \) \
+        -exec sed -i '/cdrom:/d' {} + && \
     apt-get update && \
     apt-get upgrade -y
 
@@ -96,7 +98,15 @@ RUN . ./resources/config.sh && \
     . ./resources/environment.sh && \
     ./resources/switch.sh
 
-RUN . ./resources/config.sh && \
+# Fail2ban's FusionPBX jails watch classic syslog files. Debian 13 Docker
+# images only have journald, so those files do not exist yet and fail2ban
+# refuses to start ("Have not found any log file for ssh jail").
+# Debian also enables an [sshd] jail via jail.d; disable it — FusionPBX
+# ships its own [ssh] jail in jail.local.
+RUN mkdir -p /var/log/nginx /etc/fail2ban/jail.d && \
+    touch /var/log/auth.log /var/log/syslog /var/log/nginx/access.log && \
+    printf '%s\n' '[sshd]' 'enabled = false' > /etc/fail2ban/jail.d/zz-docker-sshd.local && \
+    . ./resources/config.sh && \
     . ./resources/colors.sh && \
     . ./resources/environment.sh && \
     ./resources/fail2ban.sh
@@ -108,7 +118,7 @@ RUN . ./resources/config.sh && \
 
     # Re-run postgresql.sh and finish.sh to ensure proper setup    
 # fix db configuration issues
-WORKDIR /usr/src/fusionpbx-install.sh/ubuntu/resources
+WORKDIR /usr/src/fusionpbx-install.sh/debian/resources
 RUN ./postgresql.sh  && \    
     ./finish.sh
 

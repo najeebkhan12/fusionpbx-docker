@@ -1,9 +1,9 @@
 
 # FusionPBX Settings
-domain_name=ip_address                      # hostname, ip_address or a custom value
+domain_name=127.0.0.1                      # hostname, ip_address or a custom value
 system_username=admin                       # default username admin
-system_password=password               # dont forget to change password
-system_branch=5.4                           # master, 5.4
+system_password=nsHBJ4KjgGbRA               # dont forget to change password
+system_branch=5.5.7                           # master, 5.4
 
 # FreeSWITCH Settings
 switch_branch=stable                        # master, stable
@@ -19,11 +19,11 @@ sofia_version=1.13.17                       # release version for sofia-sip to u
 # Database Settings
 database_name=fusionpbx                     # Database name (safe characters A-Z, a-z, 0-9)
 database_username=fusionpbx                 # Database username (safe characters A-Z, a-z, 0-9)
-database_password=password             # dont forget to change password
+database_password=sHBJ4KjgGbRA             # dont forget to change password
 #system =apt install  postgres 
 database_repo=system                        # PostgreSQL official, system
 database_version=18                         # requires repo official
-database_host=ip_address                    # hostname or IP address
+database_host=127.0.0.1                    # hostname or IP address
 database_port=5432                          # port number
 database_backup=false                       # true or false
 
@@ -35,6 +35,6 @@ letsencrypt_folder=true                     # true or false
 application_transcribe=true                # Speech to Text
 application_speech=true                    # Text to Speech
 application_device_logs=true               # Log device provision requests
-application_dialplan_tools=false           # Add additional dialplan applications
+application_dialplan_tools=true           # Add additional dialplan applications
 application_edit=false                     # Editor for XML, Provision, Scripts, and PHP
-application_sip_trunks=false               # Registration-based SIP trunks
+application_sip_trunks=true               # Registration-based SIP trunks
